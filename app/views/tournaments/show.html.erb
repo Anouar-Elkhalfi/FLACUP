@@ -1,0 +1,83 @@
+<h1><%= @tournament.title %></h1>
+
+<!-- Bouton de génération des phases de poule -->
+<%= button_to "Générer les phases de poule", generate_group_stage_tournament_path(@tournament),
+              method: :post,
+              data: { confirm: "Es-tu sûr de vouloir générer les phases de poule ?" },
+              class: "btn btn-primary mb-3" %>
+
+<!-- Matchs du tournoi -->
+<h2>Matchs</h2>
+
+<% matches = @tournament.matches.order(:group, :round) %>
+<% if matches.any? %>
+  <% matches.group_by(&:group).each do |group_label, group_matches| %>
+    <h3>Poule <%= group_label %></h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Équipe A</th>
+          <th>Équipe B</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% group_matches.each do |match| %>
+          <tr>
+            <td><%= match.team_a.name %></td>
+            <td><%= match.team_b.name %></td>
+            <td>
+              <%= form_with model: match, url: match_path(match), method: :patch, local: true do |f| %>
+                <div class="d-flex gap-1">
+                  <%= f.number_field :score_a, value: match.score_a, class: "form-control", style: "width: 60px;" %>
+                  <span>-</span>
+                  <%= f.number_field :score_b, value: match.score_b, class: "form-control", style: "width: 60px;" %>
+                  <%= f.submit "OK", class: "btn btn-sm btn-primary" %>
+                </div>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+<% else %>
+  <p>Aucun match généré pour ce tournoi.</p>
+<% end %>
+
+<!-- CLASSEMENT -->
+<h2>Classement par poule</h2>
+
+<% @tournament.group_standings.each do |group_label, teams_stats| %>
+  <h3>Poule <%= group_label %></h3>
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th>Équipe</th>
+        <th>J</th>
+        <th>V</th>
+        <th>N</th>
+        <th>D</th>
+        <th>BP</th>
+        <th>BC</th>
+        <th>Diff</th>
+        <th>Pts</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% teams_stats.sort_by { |_team, stats| [-stats[:points], -(stats[:goals_for] - stats[:goals_against])] }.each do |team, stats| %>
+        <tr>
+          <td><%= team.name %></td>
+          <td><%= stats[:played] %></td>
+          <td><%= stats[:wins] %></td>
+          <td><%= stats[:draws] %></td>
+          <td><%= stats[:losses] %></td>
+          <td><%= stats[:goals_for] %></td>
+          <td><%= stats[:goals_against] %></td>
+          <td><%= stats[:goals_for] - stats[:goals_against] %></td>
+          <td><strong><%= stats[:points] %></strong></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

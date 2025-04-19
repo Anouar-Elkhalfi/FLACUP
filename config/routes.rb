@@ -1,6 +1,15 @@
 Rails.application.routes.draw do
+  get "tournaments/show"
   devise_for :users
   root to: "pages#home"
+  resources :tournaments do
+    member do
+      post :generate_group_stage
+      post :generate_quarters
+    end
+  end
+  resources :matches, only: [:update]
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

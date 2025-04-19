@@ -1,9 +1,32 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+puts "⚽ Création d'un tournoi TEST avec 8 équipes pour les phases de poule..."
+
+# Assurez-vous d'avoir la variable users disponible ici :
+users = User.all
+
+tournament = Tournament.create!(
+  title: "Coupe Test",
+  description: "Tournoi démo avec phases de poule et éliminatoires",
+  location: "Paris",
+  start_date: Date.today + 1,
+  end_date: Date.today + 10,
+  categories: "Senior",
+  registration_fee: 0.0,
+  accommodation_details: "Aucun",
+  facilities: "Terrain + Vestiaires",
+  organizer_contact: "contact@flacup.test",
+  max_teams: 8,
+  format: "Poule + Élimination",
+  extras: "Tournoi test",
+  user_id: users.where(role: 'organizer').sample&.id || users.sample.id
+)
+
+team_names = [
+  "Red Falcons", "Blue Hawks", "Green Giants", "Yellow Stars",
+  "Black Panthers", "White Wolves", "Golden Eagles", "Silver Sharks"
+]
+
+team_names.each do |name|
+  tournament.teams.create!(name: name)
+end
+
+puts "✅ Tournoi test créé avec #{tournament.teams.count} équipes (id: #{tournament.id})"
