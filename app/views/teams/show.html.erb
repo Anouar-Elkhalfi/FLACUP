@@ -1,0 +1,13 @@
+<h3>Équipes</h3>
+<ul>
+  <% @tournament.teams.each do |team| %>
+    <li>
+      <%= team.name %>
+      <%= link_to "Modifier", edit_tournament_team_path(@tournament, team), class: "btn btn-sm btn-warning ms-2" %>
+      <%= link_to "Supprimer", tournament_team_path(@tournament, team), method: :delete, data: { confirm: "Supprimer cette équipe ?" }, class: "btn btn-sm btn-danger ms-1" %>
+    </li>
+  <% end %>
+</ul>
+
+<%= link_to "Ajouter une équipe", new_tournament_team_path(@tournament), class: "btn btn-success mt-3" %>
+

@@ -1,2 +1,11 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<div class="text-center mt-5">
+  <h1>Bienvenue sur FLACUP ⚽</h1>
+  <p>Gérez vos tournois facilement, avec phases de poules et éliminatoires</p>
+
+  <% if Tournament.last.present? %>
+    <%= link_to "Accéder au tournoi", tournament_path(Tournament.last), class: "btn btn-lg btn-success mt-4" %>
+  <% else %>
+    <p>Aucun tournoi disponible actuellement.</p>
+    <%= link_to "Créer un tournoi", new_tournament_path, class: "btn btn-warning mt-2" %>
+  <% end %>
+</div>

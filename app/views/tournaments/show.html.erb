@@ -1,17 +1,14 @@
 <h1><%= @tournament.title %></h1>
 
-<!-- Bouton de génération des phases de poule -->
 <%= button_to "Générer les phases de poule", generate_group_stage_tournament_path(@tournament),
               method: :post,
               data: { confirm: "Es-tu sûr de vouloir générer les phases de poule ?" },
               class: "btn btn-primary mb-3" %>
 
-<!-- Matchs du tournoi -->
 <h2>Matchs</h2>
 
-<% matches = @tournament.matches.order(:group, :round) %>
-<% if matches.any? %>
-  <% matches.group_by(&:group).each do |group_label, group_matches| %>
+<% if @matches.any? %>
+  <% @matches.group_by(&:group).each do |group_label, group_matches| %>
     <h3>Poule <%= group_label %></h3>
     <table class="table">
       <thead>
@@ -45,10 +42,9 @@
   <p>Aucun match généré pour ce tournoi.</p>
 <% end %>
 
-<!-- CLASSEMENT -->
 <h2>Classement par poule</h2>
 
-<% @tournament.group_standings.each do |group_label, teams_stats| %>
+<% @standings.each do |group_label, teams_stats| %>
   <h3>Poule <%= group_label %></h3>
   <table class="table table-sm table-striped">
     <thead>
@@ -69,13 +65,13 @@
         <tr>
           <td><%= team.name %></td>
           <td><%= stats[:played] %></td>
-          <td><%= stats[:wins] %></td>
-          <td><%= stats[:draws] %></td>
-          <td><%= stats[:losses] %></td>
+          <td><%= stats[:won] %></td>
+          <td><%= stats[:drawn] %></td>
+          <td><%= stats[:lost] %></td>
           <td><%= stats[:goals_for] %></td>
           <td><%= stats[:goals_against] %></td>
           <td><%= stats[:goals_for] - stats[:goals_against] %></td>
-          <td><strong><%= stats[:points] %></strong></td>
+          <td><%= stats[:points] %></td>
         </tr>
       <% end %>
     </tbody>

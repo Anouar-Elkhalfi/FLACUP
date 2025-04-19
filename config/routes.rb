@@ -1,25 +1,28 @@
 Rails.application.routes.draw do
-  get "tournaments/show"
+  # Devise
   devise_for :users
+
+  # Page d'accueil
   root to: "pages#home"
+
+  # Ressources principales
   resources :tournaments do
+    resources :teams, only: [:new, :create, :edit, :update, :destroy]
+
     member do
       post :generate_group_stage
       post :generate_quarters
     end
   end
+
   resources :matches, only: [:update]
 
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # ⚠️ Supprime les routes manuelles `get "teams/new"` etc., qui sont déjà couvertes par les resources
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Monitoring (optionnel)
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/*
+  # PWA
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end

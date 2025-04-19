@@ -1,11 +1,15 @@
-puts "⚽ Création d'un tournoi TEST avec 8 équipes pour les phases de poule..."
+puts "⚽ Création d'un tournoi TEST avec 48 équipes pour les phases de poule..."
 
-# Assurez-vous d'avoir la variable users disponible ici :
-users = User.all
+# Créer un utilisateur si aucun n'existe
+user = User.first_or_create!(
+  email: "organizer@example.com",
+  password: "password123",
+  password_confirmation: "password123"
+)
 
 tournament = Tournament.create!(
   title: "Coupe Test",
-  description: "Tournoi démo avec phases de poule et éliminatoires",
+  description: "Tournoi démo avec 6 poules de 8 équipes",
   location: "Paris",
   start_date: Date.today + 1,
   end_date: Date.today + 10,
@@ -14,19 +18,15 @@ tournament = Tournament.create!(
   accommodation_details: "Aucun",
   facilities: "Terrain + Vestiaires",
   organizer_contact: "contact@flacup.test",
-  max_teams: 8,
+  max_teams: 48,
   format: "Poule + Élimination",
   extras: "Tournoi test",
-  user_id: users.where(role: 'organizer').sample&.id || users.sample.id
+  user_id: user.id
 )
 
-team_names = [
-  "Red Falcons", "Blue Hawks", "Green Giants", "Yellow Stars",
-  "Black Panthers", "White Wolves", "Golden Eagles", "Silver Sharks"
-]
-
-team_names.each do |name|
-  tournament.teams.create!(name: name)
+# Générer 48 équipes
+48.times do |i|
+  tournament.teams.create!(name: "Équipe #{i + 1}")
 end
 
 puts "✅ Tournoi test créé avec #{tournament.teams.count} équipes (id: #{tournament.id})"
